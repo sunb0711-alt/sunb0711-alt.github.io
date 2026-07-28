@@ -7,6 +7,7 @@
     <title>sunb0711 | Space Portfolio</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
+    <script src="game.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -15,6 +16,7 @@
       <nav id="site-nav" class="site-nav" aria-label="주요 메뉴">
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
         <a href="#games">Games</a>
       </nav>
     </header>
@@ -39,11 +41,38 @@
         <p>아이디어를 먼 곳까지 전달하는 프로젝트입니다.</p>
       </section>
 
+      <section id="contact" class="content-section" aria-labelledby="contact-title">
+        <p class="eyebrow">CONTACT</p>
+        <h2 id="contact-title">신호는 잠시 비공개</h2>
+        <p>공개 연락처는 제공하지 않습니다.</p>
+      </section>
+
       <section id="games" class="game-section" aria-labelledby="games-title">
         <p class="eyebrow">GAMES</p>
-        <h2 id="games-title">지렁이 게임 준비 중</h2>
-        <p>키보드와 모바일 방향 버튼으로 플레이할 게임 공간입니다.</p>
-        <div class="game-placeholder" role="status">게임 화면은 다음 개발 루프에서 추가됩니다.</div>
+        <h2 id="games-title">지렁이 게임</h2>
+        <p>키보드·WASD 또는 모바일 방향 버튼으로 우주 신호를 모아 보세요.</p>
+        <div class="game-shell">
+          <div class="game-toolbar" aria-live="polite">
+            <span>점수 <strong id="score">0</strong></span>
+            <span>최고 점수 <strong id="high-score">0</strong></span>
+            <span id="game-status">시작을 눌러 출발하세요.</span>
+          </div>
+          <canvas id="game-canvas" width="600" height="400" aria-label="지렁이 게임 화면"></canvas>
+          <div class="game-actions">
+            <button id="start-button" class="button" type="button">시작</button>
+            <button id="pause-button" class="secondary-button" type="button" disabled>일시정지</button>
+            <button id="restart-button" class="secondary-button" type="button">재시작</button>
+          </div>
+          <div class="direction-pad" aria-label="모바일 방향 버튼">
+            <button type="button" data-direction="up" aria-label="위로 이동">▲</button>
+            <div>
+              <button type="button" data-direction="left" aria-label="왼쪽으로 이동">◀</button>
+              <button type="button" data-direction="down" aria-label="아래로 이동">▼</button>
+              <button type="button" data-direction="right" aria-label="오른쪽으로 이동">▶</button>
+            </div>
+          </div>
+          <p class="game-help">방향키·WASD: 이동 · Space: 일시정지 · 적과 충돌하면 게임 오버</p>
+        </div>
       </section>
     </main>
 
