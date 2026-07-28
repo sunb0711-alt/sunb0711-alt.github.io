@@ -5,6 +5,8 @@
   const context = canvas.getContext('2d');
   const scoreElement = document.querySelector('#score');
   const highScoreElement = document.querySelector('#high-score');
+  const stageElement = document.querySelector('#stage');
+  const bossStatusElement = document.querySelector('#boss-status');
   const statusElement = document.querySelector('#game-status');
   const startButton = document.querySelector('#start-button');
   const pauseButton = document.querySelector('#pause-button');
@@ -25,6 +27,10 @@
   let queuedDirection;
   let food;
   let enemies = [];
+  let boss = null;
+  let bossStage = 0;
+  let foodsCollected = 0;
+  let stage = 1;
   let score;
   let gameState = 'idle';
   let gameTimer = null;
@@ -58,6 +64,8 @@
   function updateScore() {
     if (scoreElement) scoreElement.textContent = String(score);
     if (highScoreElement) highScoreElement.textContent = String(Math.max(readHighScore(), score));
+    if (stageElement) stageElement.textContent = String(stage);
+    if (bossStatusElement) bossStatusElement.textContent = boss ? `보스 HP ${boss.hp}` : '보스 없음';
   }
 
   function clearGameTimer() {
@@ -120,6 +128,34 @@
     scheduleEnemyCycle();
   }
 
+  function spawnBossIfNeeded() {
+    stage = Math.floor(foodsCollected / 5) + 1;
+    if (stage % 5 !== 0 || bossStage === stage || boss) return;
+    bossStage = stage;
+    boss = {
+      position: { x: columns - 4, y: Math.floor(rows / 2) },
+      direction: 'left',
+      hp: 5,
+      active: true
+    };
+    setStatus('보스 출현 — 먹이 5개로 격파하세요.');
+    updateScore();
+  }
+
+  function moveBoss() {
+    if (!boss || !boss.active) return;
+    if (Math.random() < 0.2) {
+      boss.direction = ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)];
+    }
+    const vector = directions[boss.direction];
+    boss.position = {
+      x: (boss.position.x + vector.x + columns) % columns,
+      y: (boss.position.y + vector.y + rows) % rows
+    };
+    const bossHit = snake.some((segment) => Math.abs(segment.x - boss.position.x) <= 1 && Math.abs(segment.y - boss.position.y) <= 1);
+    if (bossHit) endGame();
+  }
+
   function resetGame() {
     clearGameTimer();
     clearEnemyTimers();
@@ -127,6 +163,10 @@
     direction = 'right';
     queuedDirection = 'right';
     score = 0;
+    foodsCollected = 0;
+    stage = 1;
+    boss = null;
+    bossStage = 0;
     food = randomPosition(snake);
     enemies = createEnemies();
     gameState = 'idle';
@@ -181,12 +221,22 @@
     snake.unshift(nextHead);
     if (samePosition(nextHead, food)) {
       score += 10;
+      foodsCollected += 1;
+      if (boss) {
+        boss.hp -= 1;
+        if (boss.hp <= 0) {
+          boss = null;
+          setStatus('보스 격파 성공! 계속 탐사하세요.');
+        }
+      }
       food = randomPosition(snake);
+      spawnBossIfNeeded();
       updateScore();
     } else {
       snake.pop();
     }
     moveEnemies();
+    moveBoss();
     draw();
   }
 
@@ -258,6 +308,20 @@
         context.fill();
       }
     });
+    if (boss && boss.active) {
+      const centerX = boss.position.x * cellSize + cellSize;
+      const centerY = boss.position.y * cellSize + cellSize;
+      context.fillStyle = '#ffca6b';
+      context.beginPath();
+      context.moveTo(centerX - cellSize * 1.4, centerY + cellSize);
+      context.lineTo(centerX, centerY - cellSize * 1.4);
+      context.lineTo(centerX + cellSize * 1.4, centerY + cellSize);
+      context.closePath();
+      context.fill();
+      context.fillStyle = '#ff5f86';
+      context.fillRect(centerX - cellSize * .55, centerY - cellSize * .25, cellSize * .35, cellSize * .35);
+      context.fillRect(centerX + cellSize * .2, centerY - cellSize * .25, cellSize * .35, cellSize * .35);
+    }
     if (gameState === 'paused' || gameState === 'over') {
       context.fillStyle = 'rgba(3, 5, 15, .65)';
       context.fillRect(0, 0, canvas.width, canvas.height);

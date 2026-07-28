@@ -53,6 +53,7 @@ h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
 .game-shell { background: var(--panel); border: 1px solid rgba(140, 231, 255, .28); border-radius: 1rem; margin-top: 2rem; max-width: 42rem; padding: 1rem; }
 .game-toolbar { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; }
 .game-toolbar strong { color: var(--accent); }
+#boss-status { color: #ffca6b; font-weight: 700; }
 #game-canvas { background: #03050f; border: 1px solid rgba(140, 231, 255, .25); border-radius: .75rem; display: block; height: auto; image-rendering: pixelated; max-width: 100%; width: 600px; }
 .game-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
 .secondary-button, .direction-pad button { background: transparent; border: 1px solid rgba(140, 231, 255, .55); border-radius: .6rem; color: var(--text); cursor: pointer; padding: .65rem 1rem; }
