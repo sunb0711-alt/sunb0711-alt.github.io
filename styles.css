@@ -38,22 +38,26 @@ a { color: inherit; }
 .site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
 .menu-toggle { display: none; }
 
-main { margin: 0 auto; max-width: 72rem; padding: 0 1.5rem; }
+main { margin: 0 auto; max-width: 78rem; padding: 0 1.5rem; }
 .hero { min-height: 68vh; padding: clamp(5rem, 16vw, 10rem) 0 6rem; }
 .eyebrow { color: var(--accent); font-size: .78rem; font-weight: 800; letter-spacing: .2em; margin: 0 0 1rem; }
 h1, h2 { line-height: 1.1; margin: 0 0 1.25rem; }
-h1 { font-size: clamp(2.6rem, 8vw, 6.5rem); max-width: 14ch; }
+h1 { font-size: clamp(2.6rem, 8vw, 6.5rem); max-width: 20ch; text-wrap: balance; }
 h1 span { color: var(--accent-strong); }
 h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
 .hero-copy, .content-section > p:last-child, .game-section > p { color: var(--muted); font-size: 1.1rem; }
 .button { background: var(--accent); border-radius: 999px; color: #07101b; display: inline-block; font-weight: 800; margin-top: 1rem; padding: .8rem 1.25rem; text-decoration: none; }
 .button:hover, .button:focus-visible { background: var(--text); }
 .content-section, .game-section { border-top: 1px solid rgba(140, 231, 255, .18); padding: 6rem 0; }
-.content-section { max-width: 48rem; }
-.game-shell { background: var(--panel); border: 1px solid rgba(140, 231, 255, .28); border-radius: 1rem; margin-top: 2rem; max-width: 42rem; padding: 1rem; }
-.game-toolbar { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; }
+.content-section { max-width: 58rem; }
+.content-section > p:last-child, .game-section > p { max-width: 62ch; }
+.game-shell { background: var(--panel); border: 1px solid rgba(140, 231, 255, .28); border-radius: 1rem; margin-top: 2rem; max-width: 56rem; padding: clamp(1rem, 3vw, 1.5rem); }
+.game-toolbar { align-items: center; color: var(--muted); display: grid; gap: .75rem 1rem; grid-template-columns: repeat(3, max-content) minmax(0, 1fr); margin-bottom: 1rem; }
+.game-toolbar > span { min-width: 0; white-space: nowrap; }
 .game-toolbar strong { color: var(--accent); }
 #boss-status { color: #ffca6b; font-weight: 700; }
+#game-status { justify-self: end; text-align: right; }
+.game-help { color: #c9d5f2; }
 #game-canvas { background: #03050f; border: 1px solid rgba(140, 231, 255, .25); border-radius: .75rem; display: block; height: auto; image-rendering: pixelated; max-width: 100%; width: 600px; }
 .game-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
 .secondary-button, .direction-pad button { background: transparent; border: 1px solid rgba(140, 231, 255, .55); border-radius: .6rem; color: var(--text); cursor: pointer; padding: .65rem 1rem; }
@@ -62,7 +66,7 @@ h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
 .direction-pad { display: grid; gap: .35rem; justify-items: center; margin: 1rem auto 0; width: 10rem; }
 .direction-pad > div { display: flex; gap: .35rem; }
 .direction-pad button { min-height: 2.75rem; min-width: 2.75rem; padding: .45rem; touch-action: manipulation; }
-.game-help { color: var(--muted); font-size: .9rem; margin: 1rem 0 0; text-align: center; }
+.game-help { color: var(--muted); font-size: .9rem; margin: 1rem auto 0; max-width: 58ch; text-align: center; text-wrap: balance; }
 .site-footer { color: var(--muted); padding: 2rem 1.5rem 3rem; text-align: center; }
 
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
@@ -72,6 +76,8 @@ h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
   .site-nav { background: var(--panel); border: 1px solid rgba(140, 231, 255, .25); border-radius: .75rem; display: none; flex-direction: column; gap: .75rem; padding: 1rem; position: absolute; right: 1.5rem; top: 4.5rem; z-index: 2; }
   .site-nav.is-open { display: flex; }
   .hero { min-height: 60vh; }
+  .game-toolbar { grid-template-columns: repeat(3, max-content); }
+  #game-status { grid-column: 1 / -1; justify-self: start; text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) {

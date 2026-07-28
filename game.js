@@ -28,9 +28,11 @@
   let food;
   let enemies = [];
   let boss = null;
-  let bossStage = 0;
+  let bossTriggerScore = 0;
+  let pendingBoss = false;
   let foodsCollected = 0;
   let stage = 1;
+  let enemyMoveCounter = 0;
   let score;
   let gameState = 'idle';
   let gameTimer = null;
@@ -128,10 +130,7 @@
     scheduleEnemyCycle();
   }
 
-  function spawnBossIfNeeded() {
-    stage = Math.floor(foodsCollected / 5) + 1;
-    if (stage % 5 !== 0 || bossStage === stage || boss) return;
-    bossStage = stage;
+  function createBoss() {
     boss = {
       position: { x: columns - 4, y: Math.floor(rows / 2) },
       direction: 'left',
@@ -140,6 +139,17 @@
     };
     setStatus('보스 출현 — 먹이 5개로 격파하세요.');
     updateScore();
+  }
+
+  function spawnBossIfNeeded() {
+    stage = Math.floor(foodsCollected / 5) + 1;
+    if (score <= 0 || score % 30 !== 0 || bossTriggerScore === score) return;
+    bossTriggerScore = score;
+    if (boss) {
+      pendingBoss = true;
+      return;
+    }
+    createBoss();
   }
 
   function moveBoss() {
@@ -166,7 +176,9 @@
     foodsCollected = 0;
     stage = 1;
     boss = null;
-    bossStage = 0;
+    bossTriggerScore = 0;
+    pendingBoss = false;
+    enemyMoveCounter = 0;
     food = randomPosition(snake);
     enemies = createEnemies();
     gameState = 'idle';
@@ -193,6 +205,8 @@
   }
 
   function moveEnemies() {
+    enemyMoveCounter = (enemyMoveCounter + 1) % 3;
+    if (enemyMoveCounter !== 0) return;
     enemies.forEach((enemy) => {
       if (!enemy.active) return;
       if (Math.random() < 0.25) {
@@ -225,8 +239,11 @@
       if (boss) {
         boss.hp -= 1;
         if (boss.hp <= 0) {
+          const shouldSpawnPendingBoss = pendingBoss;
           boss = null;
+          pendingBoss = false;
           setStatus('보스 격파 성공! 계속 탐사하세요.');
+          if (shouldSpawnPendingBoss) createBoss();
         }
       }
       food = randomPosition(snake);
@@ -287,6 +304,57 @@
     context.fillRect(position.x * cellSize + 1, position.y * cellSize + 1, cellSize - 2, cellSize - 2);
   }
 
+  function drawBombPlane(enemy) {
+    const angle = { up: -Math.PI / 2, down: Math.PI / 2, left: Math.PI, right: 0 }[enemy.direction] || 0;
+    const centerX = enemy.position.x * cellSize + cellSize / 2;
+    const centerY = enemy.position.y * cellSize + cellSize / 2;
+    context.save();
+    context.translate(centerX, centerY);
+    context.rotate(angle);
+    context.fillStyle = '#ff7396';
+    context.beginPath();
+    context.moveTo(cellSize * .75, 0);
+    context.lineTo(-cellSize * .55, -cellSize * .4);
+    context.lineTo(-cellSize * .25, 0);
+    context.lineTo(-cellSize * .55, cellSize * .4);
+    context.closePath();
+    context.fill();
+    context.fillStyle = '#ffca6b';
+    context.fillRect(-cellSize * .2, -cellSize * .75, cellSize * .4, cellSize * 1.5);
+    context.restore();
+  }
+
+  function drawSpaceship(segment, isHead) {
+    const angle = { up: -Math.PI / 2, down: Math.PI / 2, left: Math.PI, right: 0 }[direction] || 0;
+    const centerX = segment.x * cellSize + cellSize / 2;
+    const centerY = segment.y * cellSize + cellSize / 2;
+    context.save();
+    context.translate(centerX, centerY);
+    if (isHead) {
+      context.rotate(angle);
+      context.fillStyle = '#a99bff';
+      context.beginPath();
+      context.moveTo(cellSize * .8, 0);
+      context.lineTo(-cellSize * .45, -cellSize * .55);
+      context.lineTo(-cellSize * .25, 0);
+      context.lineTo(-cellSize * .45, cellSize * .55);
+      context.closePath();
+      context.fill();
+      context.fillStyle = '#8ce7ff';
+      context.beginPath();
+      context.arc(cellSize * .15, 0, cellSize * .16, 0, Math.PI * 2);
+      context.fill();
+    } else {
+      context.fillStyle = '#6f77c8';
+      context.beginPath();
+      context.arc(0, 0, cellSize * .38, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#8ce7ff';
+      context.fillRect(-cellSize * .12, -cellSize * .08, cellSize * .24, cellSize * .16);
+    }
+    context.restore();
+  }
+
   function draw() {
     context.fillStyle = '#03050f';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -298,9 +366,9 @@
       context.beginPath(); context.moveTo(0, y * cellSize); context.lineTo(canvas.width, y * cellSize); context.stroke();
     }
     drawCell(food, '#8ce7ff');
-    snake.forEach((segment, index) => drawCell(segment, index === 0 ? '#a99bff' : '#6f77c8'));
+    snake.forEach((segment, index) => drawSpaceship(segment, index === 0));
     enemies.forEach((enemy) => {
-      if (enemy.active) drawCell(enemy.position, '#ff7396');
+      if (enemy.active) drawBombPlane(enemy);
       if (enemy.exploding) {
         context.beginPath();
         context.fillStyle = 'rgba(255, 177, 92, .75)';

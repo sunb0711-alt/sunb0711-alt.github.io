@@ -56,10 +56,10 @@
             <span>점수 <strong id="score">0</strong></span>
             <span>최고 점수 <strong id="high-score">0</strong></span>
             <span>단계 <strong id="stage">1</strong></span>
-            <span id="boss-status">보스 없음</span>
+            <span id="boss-status" role="status">보스 없음</span>
             <span id="game-status">시작을 눌러 출발하세요.</span>
           </div>
-          <canvas id="game-canvas" width="600" height="400" aria-label="지렁이 게임 화면"></canvas>
+          <canvas id="game-canvas" width="600" height="400" aria-label="우리팀 우주선 게임 화면" aria-describedby="game-status"></canvas>
           <div class="game-actions">
             <button id="start-button" class="button" type="button">시작</button>
             <button id="pause-button" class="secondary-button" type="button" disabled>일시정지</button>
@@ -73,7 +73,7 @@
               <button type="button" data-direction="right" aria-label="오른쪽으로 이동">▶</button>
             </div>
           </div>
-          <p class="game-help">방향키·WASD: 이동 · Space: 일시정지 · 적과 충돌하면 게임 오버</p>
+          <p class="game-help">방향키·WASD: 이동 · Space: 일시정지 · 우리팀 우주선 · 적 비행기 · 충돌하면 게임 오버</p>
         </div>
       </section>
     </main>
